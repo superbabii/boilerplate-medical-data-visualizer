@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -6,8 +7,10 @@ import seaborn as sns
 df = pd.read_csv("medical_examination.csv")
 
 # Calculate BMI and add 'overweight' column
+# Calculate BMI and add 'overweight' column, then drop BMI
 df['BMI'] = df['weight'] / ((df['height'] / 100) ** 2)
 df['overweight'] = df['BMI'].apply(lambda x: 1 if x > 25 else 0)
+df.drop(columns=['BMI'], inplace=True)  # Drop BMI permanently
 
 # Normalize cholesterol and glucose levels
 df['cholesterol'] = df['cholesterol'].apply(lambda x: 0 if x == 1 else 1)
@@ -25,7 +28,7 @@ def draw_cat_plot():
     return fig
 
 def draw_heat_map():
-    # Clean data
+    # Clean the data
     df_heat = df[
         (df['ap_lo'] <= df['ap_hi']) &
         (df['height'] >= df['height'].quantile(0.025)) &
@@ -43,6 +46,7 @@ def draw_heat_map():
     # Set up the matplotlib figure
     fig, ax = plt.subplots(figsize=(12, 10))
 
-    # Draw the heatmap
+    # Draw the heatmap with seaborn
     sns.heatmap(corr, annot=True, fmt=".1f", mask=mask, square=True, linewidths=.5, cmap="coolwarm", cbar_kws={"shrink": .5})
     return fig
+
